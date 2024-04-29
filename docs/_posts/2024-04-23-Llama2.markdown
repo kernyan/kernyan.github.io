@@ -1,0 +1,137 @@
+---
+layout: post
+title:  "Llama 2 Architecture Writeup"
+date:   2024-04-23 08:00:00 -0000
+categories: LLM, ML
+---
+Going through Llama 2 architecture layer-by-layer to understand design decisions.
+
+# Table of contents
+1. [Introduction](#introduction)
+2. [Layers Overview](#layers-overview)
+3. [Implementation](#investigation)
+
+# Introduction <a name="introduction"></a>
+
+Meta published the foundational LLaMA model [paper](https://arxiv.org/pdf/2302.13971.pdf) on 2023-02-27. Followed by LLaMA-2 [paper](https://arxiv.org/pdf/2307.09288.pdf) on 2023-07-19. And most recently, LLaMA-3 [repo](https://github.com/meta-llama/llama3/blob/main/MODEL_CARD.md) on 2024-04-18.
+
+Since LLaMA-3 doesn't yet come with an arxiv paper, we're going to study LLaMA-2's architecture. It was noted that the key changes from 2 to 3 are
+1. vocab size from 32k to 128k, and
+2. using Grouped Query Attention (GQA) (but LLaMA-2's paper mentions the use of GQA already, so it's unclear at first glance what differs)
+
+Our main goal is to understand LLaMA's architecture design.
+
+Note that the parameters are not exact, some of the info is pulled from Karpathy's llama.c model, for instance, the `hidden_size` ends up being shown as 288 instead of 4096. For accurate llama 2 parameters, consult hugging face [model card](https://huggingface.co/docs/transformers/main/en/model_doc/llama2#transformers.LlamaConfig). For our example, we'll use the "small" version of the params
+
+| attr                    | official |  small |
+|-------------------------|---------:|-------:|
+| vocab_size              |    32000 |  32000 |
+| hidden_size             |     4096 |    288 |
+| intermediate_size       |    11008 |        |
+| num_hidden_layers       |       32 |      6 |
+| num_attention_heads     |       32 |      6 |
+| num_key_value_heads     |     None |        |
+| hidden_act              |   'silu' | 'silu' |
+| max_position_embeddings |     2048 |   2048 |
+| initializer_range       |     0.02 |        |
+| rms_norm_eps            |    1e-06 |        |
+| use_cache               |     True |        |
+| pad_token_id            |     None |        |
+| bos_token_id            |        1 |        |
+| eos_token_id            |        2 |        |
+| pretraining_tp          |        1 |        |
+| tie_word_embeddings     |    False |        |
+| rope_theta              |  10000.0 |        |
+| rope_scaling            |     None |        |
+| attention_bias          |    False |        |
+| attention_dropout       |      0.0 |        |
+
+
+# Layers Overview<a name="layers-overview"></a>
+
+These are the weight layer names of llama-2, let's go through them
+
+```
+['tok_embeddings.weight               torch.Size([32000, 288])',
+ 'layers.0.attention.wq.weight        torch.Size([288, 288])',
+ 'layers.0.attention.wk.weight        torch.Size([288, 288])',
+ 'layers.0.attention.wv.weight        torch.Size([288, 288])',
+ 'layers.0.attention.wo.weight        torch.Size([288, 288])',
+ 'layers.0.feed_forward.w1.weight     torch.Size([768, 288])',
+ 'layers.0.feed_forward.w2.weight     torch.Size([288, 768])',
+ 'layers.0.feed_forward.w3.weight     torch.Size([768, 288])',
+ 'layers.0.attention_norm.weight      torch.Size([288])',
+ 'layers.0.ffn_norm.weight            torch.Size([288])',
+ 'layers.1.attention.wq.weight        torch.Size([288, 288])',
+ 'layers.1.attention.wk.weight        torch.Size([288, 288])',
+ 'layers.1.attention.wv.weight        torch.Size([288, 288])',
+ 'layers.1.attention.wo.weight        torch.Size([288, 288])',
+ 'layers.1.feed_forward.w1.weight     torch.Size([768, 288])',
+ 'layers.1.feed_forward.w2.weight     torch.Size([288, 768])',
+ 'layers.1.feed_forward.w3.weight     torch.Size([768, 288])',
+ 'layers.1.attention_norm.weight      torch.Size([288])',
+ 'layers.1.ffn_norm.weight            torch.Size([288])',
+ 'layers.2.attention.wq.weight        torch.Size([288, 288])',
+ 'layers.2.attention.wk.weight        torch.Size([288, 288])',
+ 'layers.2.attention.wv.weight        torch.Size([288, 288])',
+ 'layers.2.attention.wo.weight        torch.Size([288, 288])',
+ 'layers.2.feed_forward.w1.weight     torch.Size([768, 288])',
+ 'layers.2.feed_forward.w2.weight     torch.Size([288, 768])',
+ 'layers.2.feed_forward.w3.weight     torch.Size([768, 288])',
+ 'layers.2.attention_norm.weight      torch.Size([288])',
+ 'layers.2.ffn_norm.weight            torch.Size([288])',
+ 'layers.3.attention.wq.weight        torch.Size([288, 288])',
+ 'layers.3.attention.wk.weight        torch.Size([288, 288])',
+ 'layers.3.attention.wv.weight        torch.Size([288, 288])',
+ 'layers.3.attention.wo.weight        torch.Size([288, 288])',
+ 'layers.3.feed_forward.w1.weight     torch.Size([768, 288])',
+ 'layers.3.feed_forward.w2.weight     torch.Size([288, 768])',
+ 'layers.3.feed_forward.w3.weight     torch.Size([768, 288])',
+ 'layers.3.attention_norm.weight      torch.Size([288])',
+ 'layers.3.ffn_norm.weight            torch.Size([288])',
+ 'layers.4.attention.wq.weight        torch.Size([288, 288])',
+ 'layers.4.attention.wk.weight        torch.Size([288, 288])',
+ 'layers.4.attention.wv.weight        torch.Size([288, 288])',
+ 'layers.4.attention.wo.weight        torch.Size([288, 288])',
+ 'layers.4.feed_forward.w1.weight     torch.Size([768, 288])',
+ 'layers.4.feed_forward.w2.weight     torch.Size([288, 768])',
+ 'layers.4.feed_forward.w3.weight     torch.Size([768, 288])',
+ 'layers.4.attention_norm.weight      torch.Size([288])',
+ 'layers.4.ffn_norm.weight            torch.Size([288])',
+ 'layers.5.attention.wq.weight        torch.Size([288, 288])',
+ 'layers.5.attention.wk.weight        torch.Size([288, 288])',
+ 'layers.5.attention.wv.weight        torch.Size([288, 288])',
+ 'layers.5.attention.wo.weight        torch.Size([288, 288])',
+ 'layers.5.feed_forward.w1.weight     torch.Size([768, 288])',
+ 'layers.5.feed_forward.w2.weight     torch.Size([288, 768])',
+ 'layers.5.feed_forward.w3.weight     torch.Size([768, 288])',
+ 'layers.5.attention_norm.weight      torch.Size([288])',
+ 'layers.5.ffn_norm.weight            torch.Size([288])',
+ 'norm.weight                         torch.Size([288])',
+ 'output.weight                       torch.Size([32000, 288])']
+```
+
+### tok_embeddings
+
+An input prompt "Where is the dog?" gets tokenized using Byte-Pair encoding to a series of tokens  
+
+```python
+from sentencepiece import SentencePieceProcessor
+sp_model = SentencePieceProcessor("tokenizer.model")
+sp_model.encode("Where is the dog?")
+
+>>>> [6804, 338, 278, 11203, 29973]
+```
+
+LLaMa 1 and 2 has vocab size of 32k, thus the embedding step is a table of 32k entries that projects each token into a vector of size "hidden size", which in this case is 288. Thus we see 
+`tok_embeddings.weight: torch.Size([32000, 288])`
+
+Thus after the embedding stage, the output shape becomes `input_len x hidden_size`
+
+*TODO: return to talk about positional encoding
+
+### Transformer
+
+The transformer is composed of 6 attention blocks, where each block takes in a tensor of `input_len x hidden_size`.
+
+Each of the `input_len x hidden_size` input is multipled by three weight matrices of shape `hidden_size x hidden_size` into three matrices known as K, Q, V for (Key, Query, and Value respectively)
