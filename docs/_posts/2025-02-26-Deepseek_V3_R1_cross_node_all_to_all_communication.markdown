@@ -50,7 +50,7 @@ A naive GPU cluster implementation would be to place each expert on a separate d
 
 This diagram from GShard paper illustrates how the cross device communication happen
 
-![GShard MoE](../assets/images/2025_02_moe_gshard.png)
+![GShard MoE]({{ site.url }}/assets/images/2025_02_moe_gshard.png)
 
 * It is worth clarifying that the transformer block in each shard is processing the full token embedding, thus the attention itself are complete and do not depend on other shards. It is only the [tokens, channels] going into each shard's FF need to be assembled from tokens coming from remote devices. I think of each shard's group tokens as a mini-batch in itself.
 
