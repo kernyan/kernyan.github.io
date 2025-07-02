@@ -19,18 +19,56 @@
 # in the templates via {{ site.myvariable }}.
 
 title: Kernyan's blog
-#email: your-email@example.com
 description: >- # this means to ignore newlines until "baseurl:"
   Notes on OS development, reverse-engineering, and whatever cool stuff I find
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
-#twitter_username: jekyllrb
+url: "https://www.kernyan.com" # the base hostname & protocol for your site
 github_username:  kernyan
 
 # Build settings
 theme: minima
 plugins:
   - jekyll-feed
+  - jekyll-sitemap
+
+# Google Analytics
+google_analytics: G-T4JBRGCHJZ
+
+# MathJax Configuration
+mathjax: true
+
+# Giscus Comments Configuration
+giscus:
+  repo: "kernyan/kernyan.github.io"
+  repo_id: "R_kgDOGn16PA"
+  category: "Announcements"
+  category_id: "DIC_kwDOGn16PM4CsYBP"
+  mapping: "pathname"
+  reactions_enabled: 1
+  emit_metadata: 0
+  input_position: "bottom"
+  theme: "preferred_color_scheme"
+  lang: "en"
+
+# Custom navigation categories
+sidebar_categories:
+  - name: "C/C++"
+    slug: "c-c++"
+  - name: "CPU" 
+    slug: "cpu"
+  - name: "CUDA"
+    slug: "cuda"
+  - name: "Hardware"
+    slug: "hardware"
+  - name: "Others"
+    slug: "others"
+  - name: "OS"
+    slug: "os"
+  - name: "Windows"
+    slug: "windows"
+
+# Show excerpts on home page
+show_excerpts: true
 
 # Exclude from processing.
 # The following items will not be processed, by default.
@@ -52,3 +90,4 @@ exclude:
   - vendor/gems/
   - vendor/ruby/
   - ruby/3.0.0/gems/
+  - ruby/

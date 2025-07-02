@@ -1,0 +1,26 @@
+.site-header,
+.site-footer {
+  text-align: center;
+  padding: 1rem;
+  background: #fefefe;
+  border-bottom: 1px solid #ddd;
+}
+
+.page-wrapper {
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.sidebar {
+  width: 260px;
+  background: #f4f4f4;
+  padding: 1rem;
+  border-right: 1px solid #ccc;
+}
+
+.page-content {
+  flex: 1;
+  padding: 1rem 2rem;
+}
