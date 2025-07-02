@@ -24,3 +24,31 @@
   flex: 1;
   padding: 1rem 2rem;
 }
+
+.post-preview {
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border-radius: 10px;
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s ease;
+}
+
+.post-preview:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+  border-color: #999;
+  background-color: #fcfcfc;
+}
+
+.post-preview h2 {
+  margin-top: 0;
+  font-size: 1.4rem;
+  color: #222;
+}
+
+.post-preview .post-date {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
