@@ -1,14 +1,13 @@
 ---
-author: kernyan9
+author: kernyan
 comments: true
 date: 2019-08-09 07:47:39+00:00
 layout: post
 link: http://kernyan.com/2019/08/09/clang-format-style-option-listings/
 slug: clang-format-style-option-listings
 title: clang-format style-option listings
-wordpress_id: 1857
 categories:
-- Tools
+- Others
 ---
 
 

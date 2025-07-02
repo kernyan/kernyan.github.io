@@ -1,14 +1,13 @@
 ---
-author: kernyan9
+author: kernyan
 comments: true
 date: 2020-02-28 03:53:19+00:00
 layout: post
 link: http://kernyan.com/2020/02/28/planning-the-kernos/
 slug: planning-the-kernos
 title: Planning the KernOS
-wordpress_id: 1919
-tags:
-- KernOS
+categories:
+- OS
 ---
 
 
@@ -68,7 +67,7 @@ As a starting point, I want reliable and convenient debugging support as I expec
 
 
 
-With those constrains and requirements specified, what part of the OS component listed in [[https://kernyan.com/2020/01/15/building-an-operating-system-kernos/](https://kernyan.com/2020/01/15/building-an-operating-system-kernos/)] do we write first?
+With those constrains and requirements specified, what part of the OS component listed in [building an operating system KernOS](/os/2020/01/15/building-an-operating-system-kernos.html) do we write first?
 
 
 
@@ -133,10 +132,10 @@ Things to note of the linked-list that we need,
 
 
 
-  1. We want the following atomic functions
-    * remove item from list (and joining remaining parts of the list)
-    * add item to list
-  2. Ideally the list also accommodates ordering by priority which is ready for process rescheduling
+  - We want the following atomic functions
+    - remove item from list (and joining remaining parts of the list)
+    - add item to list
+  - Ideally the list also accommodates ordering by priority which is ready for process rescheduling
 
 
 

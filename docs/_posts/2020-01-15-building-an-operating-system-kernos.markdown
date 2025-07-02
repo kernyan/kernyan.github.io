@@ -1,16 +1,13 @@
 ---
-author: kernyan9
+author: kernyan
 comments: true
-date: 2020-01-15 01:05:35+00:00
+date: 2020-01-15 13:05:35+00:00
 layout: post
 link: http://kernyan.com/2020/01/15/building-an-operating-system-kernos/
 slug: building-an-operating-system-kernos
 title: Building an operating system - KernOS
-wordpress_id: 1896
 categories:
-- Operating System
-tags:
-- KernOS
+- OS
 ---
 
 

@@ -2,7 +2,8 @@
 layout: post
 title:  "Deepseek V3/R1 intra/inter node all-to-all communication"
 date:   2025-02-26 08:00:00 -0000
-categories: HPC, CUDA
+categories:
+- CUDA
 ---
 
 Recently, DeepSeek V3 made headlines by being able to train 14.8 trilion tokens using only 2.788 million H800 GPU hours. This was estimated to be several times more efficient than approaches that did not incorporate DeepSeek's LLM and training infrastructure designs.

@@ -1,5 +1,5 @@
 ---
-author: kernyan9
+author: kernyan
 comments: true
 date: 2020-12-08 02:46:28+00:00
 layout: post
@@ -9,7 +9,7 @@ title: Infinite Page Fault, Triple Fault, and General Protection Fault
 wordpress_id: 2025
 categories:
 - C/C++
-- Operating System
+- OS
 ---
 
 
@@ -21,7 +21,7 @@ In KernOS's development, we are at the point of handling page fault exceptions. 
 
 
 
-
+```cpp
     
     volatile uint32_t *Mem = (uint32_t*) 0x400000;
     *Mem = 10;
@@ -29,7 +29,7 @@ In KernOS's development, we are at the point of handling page fault exceptions. 
     volatile uint32_t *Mem2 = (uint32_t*) 0x400f00;
     *Mem2 = 20;
 
-
+```
 
 
 
@@ -43,7 +43,7 @@ Memory location 0 to 4MB has been identity mapped at kernel initialization (see 
 
 
 
-The first ***Mem** is expected to cause a page fault, while the second ***Mem2** being less than 4K apart from the first, should not trigger a page fault; as the latter's page would have been mapped.
+The first **Mem** is expected to cause a page fault, while the second **Mem2** being less than 4K apart from the first, should not trigger a page fault; as the latter's page would have been mapped.
 
 
 
@@ -57,7 +57,7 @@ To test that the unmapped memory access can 1) trigger a page fault, and 2) be h
 
 
 
-
+```cpp
     
     extern "C" void FaultPageHandler()
     {
@@ -86,7 +86,7 @@ To test that the unmapped memory access can 1) trigger a page fault, and 2) be h
         kprintf("Page fault handler called\n");
     }
     
-
+```
 
 
 
@@ -139,7 +139,7 @@ The interrupt handler macro below simply wraps the handler call with an _iret_ i
 
 
 
-
+```cpp
     
     #define INTRP_ENTRY(Type)                     \
       extern "C" void Interrupt##Type##Entry();   \
@@ -152,7 +152,7 @@ The interrupt handler macro below simply wraps the handler call with an _iret_ i
     
     INTRP_ENTRY(Timer)
 
-
+```
 
 
 
@@ -180,7 +180,7 @@ Here's the revised exception handler code that correctly pops the error code.
 
 
 
-
+```cpp
     
     #define FAULT_ENTRY(Type)                   \
         extern "C" void Fault##Type##Entry();   \
@@ -194,7 +194,7 @@ Here's the revised exception handler code that correctly pops the error code.
     
     FAULT_ENTRY(Page)
 
-
+```
 
 
 

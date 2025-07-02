@@ -1,17 +1,15 @@
 ---
-author: kernyan9
+author: kernyan
 comments: true
 date: 2019-08-02 03:57:41+00:00
 layout: post
 link: http://kernyan.com/2019/08/02/getting-windows-pdb-symbol-for-air-gapped-isolated-machine/
 slug: getting-windows-pdb-symbol-for-air-gapped-isolated-machine
 title: Getting window's pdb symbol for air gapped / isolated environment
-wordpress_id: 1777
 categories:
 - C/C++
-tags:
-- debugging
-- windows
+- Debugging
+- Windows
 ---
 
 
@@ -23,7 +21,7 @@ Occasionally while debugging on visual studio, we encounter certain MFC function
 
 
 
-![](https://kernyan.com/wp-content/uploads/2019/08/no-symbol.png)
+![](/assets/images/2019_08_no_symbol.png)
 
 
 
@@ -51,7 +49,7 @@ An alternative to closing the "Call Stack" window is to simply load the symbols,
 
 
 
-![](https://kernyan.com/wp-content/uploads/2019/08/symbol-load-information.png)
+![](/assets/images/2019_08_symbol_load_information.png)
 
 
 
@@ -79,8 +77,7 @@ We could manually download the pdb files and transfer over to the isolated envir
 
 
 
-![](https://kernyan.com/wp-content/uploads/2019/08/version-name.png)
-
+![](/assets/images/2019_08_version_name.png)
 
 
 
@@ -139,8 +136,7 @@ Copy the GUID down to paper and reconstruct the manifest file manually as below,
 
 
 
-![](https://kernyan.com/wp-content/uploads/2019/08/manifest2.png)
-
+![](/assets/images/2019_08_manifest2.png)
 
 
 

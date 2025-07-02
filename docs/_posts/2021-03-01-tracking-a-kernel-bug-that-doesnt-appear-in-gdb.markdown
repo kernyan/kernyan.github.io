@@ -1,15 +1,14 @@
 ---
-author: kernyan9
+author: kernyan
 comments: true
 date: 2021-03-01 12:30:53+00:00
 layout: post
 link: http://kernyan.com/2021/03/01/tracking-a-kernel-bug-that-doesnt-appear-in-gdb/
 slug: tracking-a-kernel-bug-that-doesnt-appear-in-gdb
 title: Tracking a kernel bug that doesn't appear in gdb
-wordpress_id: 2064
 categories:
 - C/C++
-- Operating System
+- OS
 ---
 
 I have been trying to locate the cause of a seemingly random bug in KernOS, and after a long investigation, I finally pinned it down.
@@ -34,33 +33,33 @@ To do this, I will lay out my investigation process and label the important clue
 
 
 
-  1. Bug behavior 1
+  1. [Bug behavior 1](#bug-behavior-1)
 
 
-  2. Bug behavior 2
+  2. [Bug behavior 2](#bug-behavior-2)
 
 
-  3. Stepping through gdb, instrumenting gdb
+  3. [Stepping through gdb, instrumenting gdb](#stepping-through-gdb-instrumenting-gdb)
 
 
-  4. Ruling out page directory setup, page fault handler, kernel heap allocation
+  4. [Ruling out page directory setup, page fault handler, kernel heap allocation](#ruling-out-page-directory-setup-page-fault-handler-kernel-heap-allocation)
 
 
-  5. Instrumenting qemu
+  5. [Instrumenting qemu](#instrumenting-qemu)
 
 
-  6. Ruling out timer interrupt handler
+  6. [Ruling out timer interrupt handler](#ruling-out-timer-interrupt-handler)
 
 
-  7. Noticing pattern of interrupt that causes bug
+  7. [Noticing pattern of interrupt that causes bug](#noticing-pattern-of-interrupt-that-causes-bug)
 
 
-  8. Fixing the bug
+  8. [Fixing the bug](#fixing-the-bug)
 
 
 
 
-**Bug behavior 1**
+### Bug behavior 1
 
 
 
@@ -77,7 +76,7 @@ For context, the 0 - 8MB physical memory range is identity mapped to virtual mem
 
 
 
-    
+```cpp    
       
         void MemoryTest()
         {
@@ -90,7 +89,7 @@ For context, the 0 - 8MB physical memory range is identity mapped to virtual mem
            *Mem2 = 1;                                      // memory access causes Page Fault
         }
     
-
+```
 
 
 
@@ -101,7 +100,7 @@ Clue 1: The bug was that about 1 in 5 runs, right after 0x900000 is mapped, I wo
 
 
 
-**Bug behavior 2**
+### Bug behavior 2
 
 
 
@@ -111,7 +110,7 @@ In addition to virtual memory mapping, I also have a custom vector container tes
 
 
 
-
+```cpp
     
      
         void VectorTest()
@@ -131,7 +130,7 @@ In addition to virtual memory mapping, I also have a custom vector container tes
            kassert(V.Back() == V[6], "Vector::Back failed\n");
         }
     
-
+```
 
 
 
@@ -147,7 +146,7 @@ To further figure out what's going on, I added a series of vector indexing as be
 
 
 
-
+```cpp
     
     
         void VectorTest()
@@ -166,7 +165,7 @@ To further figure out what's going on, I added a series of vector indexing as be
            kputchar("%i", V[2]);
         }
     
-
+```
 
 
 
@@ -174,8 +173,7 @@ To further figure out what's going on, I added a series of vector indexing as be
 
 And the output looks like
 
-
-![](https://kernyan.com/wp-content/uploads/2021/03/vector.png?w=864)
+![](/assets/images/2021_03_vector.png?w=864)
 
 
 Clue 2: Where once in a while, the indexing would return 0, and in those cases, it would also trigger a page fault at address 0x0.
@@ -183,7 +181,7 @@ Clue 2: Where once in a while, the indexing would return 0, and in those cases, 
 
 
 
-**Stepping through gdb, instrumenting gdb**
+### Stepping through gdb, instrumenting gdb
 
 
 
@@ -202,14 +200,14 @@ Here's how I was running qemu and gdb,
 
 
 
-
+```bash
 
     
         qemu-system-i386 -s -S kern.bin
         # -s means to allow gdb to connect at port tcp::1234
         # -S means to stop at first instruction
     
-
+```
 
 
 
@@ -220,7 +218,7 @@ And in gdb
 
 
 
-
+```
     
        
         target remote connection :1234
@@ -231,7 +229,7 @@ And in gdb
         si
         end
     
-
+```
 
 
 
@@ -242,7 +240,7 @@ Clue 3: No matter how many times I run the kernel and log the instructions, the 
 
 
 
-**Ruling out page directory setup, page fault handler, kernel heap allocation**
+### Ruling out page directory setup, page fault handler, kernel heap allocation
 
 
 
@@ -278,7 +276,7 @@ Clue 4: It is not related to
 
 
 
-**Instrumenting qemu**
+### Instrumenting qemu
 
 
 
@@ -301,10 +299,10 @@ After some fumbling, I decided to start from inspecting qemu's handling of page 
 Here's what I got
 
 
-![](https://kernyan.com/wp-content/uploads/2021/03/313_314.png?w=864)
+![](/assets/images/2021_03_313_314.png?w=864)
 
 
-You can ignore Break313, Break314, it's simply a dummy function I inserted into qemu's do_interrupt_all function to allow easy breaking. By chance, I noticed an important difference between the 313-th and 314-th call. Looking at line 18 in the image above, you can see that the intno on the left is 32, while the one on the right is 14.
+You can ignore **Break313**, **Break314**, it's simply a dummy function I inserted into qemu's do_interrupt_all function to allow easy breaking. By chance, I noticed an important difference between the 313-th and 314-th call. Looking at line 18 in the image above, you can see that the intno on the left is 32, while the one on the right is 14.
 
 
 
@@ -334,7 +332,7 @@ Clue 5: The bug occurs after a timer interrupt.
 
 
 
-**Ruling out timer interrupt handler**
+### Ruling out timer interrupt handler
 
 
 
@@ -349,7 +347,7 @@ Thus I continued by inspecting timer interrupt related code. Below is the Interr
 
 
 
-
+```cpp
     
        
         extern "C" void InterruptTimerHandler()
@@ -371,7 +369,7 @@ Thus I continued by inspecting timer interrupt related code. Below is the Interr
             }
         }
     
-
+```
 
 
 
@@ -387,7 +385,7 @@ Clue 6: Interrupt timer handler is correct.
 
 
 
-**Noticing pattern of interrupt that causes bug**
+### Noticing pattern of interrupt that causes bug
 
 
 
@@ -395,9 +393,7 @@ Clue 6: Interrupt timer handler is correct.
 Now I started to suspect that it was qemu's i386 hardware emulation that was buggy. That it somehow messes up the system's environment after a timer interrupt. I felt this was unlikely, but I thought of Sherlock Holmes' quote and went on anyway.
 
 
-
-
-_“When you have eliminated the impossible, whatever remains, however improbable, must be the truth”_
+> *When you have eliminated the impossible, whatever remains, however improbable, must be the truth*
 
 
 
@@ -405,19 +401,19 @@ _“When you have eliminated the impossible, whatever remains, however improbabl
 Stepping through qemu's source, I noticed the code snippet below,
 
 
-![](https://kernyan.com/wp-content/uploads/2021/03/logqemu.png?w=864)
+![](/assets/images/2021_03_logqemu.png?w=864)
 
 
 Looks like qemu has a log mode that prints out assembly instructions. Duh, I should have rtfm. Turns out qemu has some really sweet debugging print outs.
 
 
-![](https://kernyan.com/wp-content/uploads/2021/03/qemu_logging.png?w=864)
+![](/assets/images/2021_03_qemu_logging.png?w=864)
 
 
 With interrupt logs, and guest assembly logs (-d int,in_asm) on, here's the output I obtained (modified for clarity)
 
 
-![](https://kernyan.com/wp-content/uploads/2021/03/qemu_in_asm_dump.png?w=864)
+![](/assets/images/2021_03_qemu_in_asm_dump.png?w=864)
 
 
 In line 9, the CPU is attempting to dereference memory location 0x900000, which as mentioned earlier isn't yet mapped to physical memory. Thus it immediately triggers a page fault exception, which can be seen in line 11 - 21. Line 18 - 21 is all the page fault handler code that I have omitted since they aren't the culprit.
@@ -469,7 +465,7 @@ This explains the two buggy behaviors. In 1) the unmapped virtual memory access 
 Finally, the fix is to store and restore all the unpreserved registers before we execute the timer interrupt handler.
 
 
-![](https://kernyan.com/wp-content/uploads/2021/03/restore_registers.png?w=864)
+![](/assets/images/2021_03_restore_registers.png?w=864)
 
 
 In all, the most useful thing I learned is to utilize qemu's instruction and interrupt dump, especially in a kernel building project. The quality of the information produced is just a gold mine.

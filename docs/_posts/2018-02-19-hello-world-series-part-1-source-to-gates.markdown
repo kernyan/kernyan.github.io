@@ -1,14 +1,14 @@
 ---
-author: kernyan9
+author: kernyan
 comments: true
 date: 2018-02-19 05:09:11+00:00
 layout: post
 link: http://kernyan.com/2018/02/19/hello-world-series-part-1-source-to-gates/
 slug: hello-world-series-part-1-source-to-gates
 title: Source code to machine instruction
-wordpress_id: 1697
 categories:
 - C/C++
+- CPU
 ---
 
 
@@ -28,7 +28,7 @@ When you compile the following code,
 
 
 
-[code language="c"]
+```cpp
 
 int main()
 {
@@ -36,8 +36,7 @@ int main()
   return 0;
 }
 
-[/code]
-
+```
 
 
 
@@ -53,15 +52,14 @@ Then the compiler processes the text above into machine code. For now, simply ta
 
 
 
-
-[code]
+```c
 0000620 ffff e8ff ff48 ffff 05c6 09e1 0020 5d01
 0000630 0fc3 801f 0000 0000 c3f3 0f66 441f 0000
 0000640 4855 e589 e95d ff66 ffff 4855 e589 8d48
 0000650 9f3d 0000 b800 0000 0000 c1e8 fffe b8ff
 0000660 0000 0000 c35d 2e66 1f0f 0084 0000 0000
 0000670 5741 5641 8949 41d7 4155 4c54 258d 0736
-[/code]
+```
 
 
 
@@ -81,7 +79,7 @@ In radare2's disassembly of the same executable, we see that
 
 
 
-[code]
+```c
 
 0x0000064a      55             push rbp
 0x0000064b      4889e5         mov rbp, rsp
@@ -93,8 +91,7 @@ In radare2's disassembly of the same executable, we see that
 0x00000665      c3             ret
 
 
-[/code]
-
+```
 
 
 

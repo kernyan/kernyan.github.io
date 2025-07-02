@@ -2,7 +2,8 @@
 layout: post
 title:  "Leaking DNS Queries through VPN"
 date:   2023-06-25 08:00:00 -0000
-categories: FPGA, OS
+categories:
+- OS
 ---
 When you have an active VPN connection, there has to be an intranet DNS server to resolve internal network url. Does the intranet DNS server get a chance to log public DNS queries?
 

@@ -1,14 +1,14 @@
 ---
-author: kernyan9
+author: kernyan
 comments: true
 date: 2019-01-11 01:27:06+00:00
 layout: post
 link: http://kernyan.com/2019/01/11/what-passing-by-value-actually-means-to-the-cpu/
 slug: what-passing-by-value-actually-means-to-the-cpu
 title: What Passing by Value Actually Means to the CPU
-wordpress_id: 1748
 categories:
 - C/C++
+- CPU
 ---
 
 
@@ -36,7 +36,7 @@ The compiler cares about the distinction between (2) and (3), but not the CPU. T
 
 
 
-![](https://kernyan.com/wp-content/uploads/2019/01/ptr_ref.png)
+![](/assets/images/2019_01_ptr_ref.png)
 
 
 
@@ -48,7 +48,7 @@ Back to the more interesting discussion of pass-by-value vs pass-by-reference. T
 
 
 
-[code language="c"]
+```c
 struct Four64Bits
 {    
     long long i1;
@@ -74,7 +74,7 @@ int main()
 
     return 0;
 }
-[/code]
+```
 
 
 
@@ -86,7 +86,7 @@ The two function calls do exactly nothing, and they vary only in the parameter t
 
 
 
-![](https://kernyan.com/wp-content/uploads/2019/01/value_ref.png)
+![](/assets/images/2019_01_value_ref.png)
 
 
 
@@ -100,7 +100,7 @@ The two function calls do exactly nothing, and they vary only in the parameter t
 
 
 
-Right side's line 18 [code]lea rax, [rbp-32][/code] is taking the memory location of "Var". The memory location is "[rbp-32]" as local variables are allocated on the stack with a negative offset of its size (and Four64Bits is 32 bytes). Line 19 [code]mov rdi, rax[/code] is moving the memory location of "Var" to register rdi, which you can then see in line 4, where it is being used in the ByReference instructions. What's most important to notice is that we only needed a 64-bit memory location to pass a variable of 4*64 bits in size.  
+Right side's line 18 ```lea rax, [rbp-32]``` is taking the memory location of **Var**. The memory location is ```[rbp-32]``` as local variables are allocated on the stack with a negative offset of its size (and Four64Bits is 32 bytes). Line 19 ```mov rdi, rax``` is moving the memory location of **Var** to register ```rdi```, which you can then see in line 4, where it is being used in the ByReference instructions. What's most important to notice is that we only needed a 64-bit memory location to pass a variable of 4*64 bits in size.  
 
 
 
@@ -117,7 +117,7 @@ Right side's line 18 [code]lea rax, [rbp-32][/code] is taking the memory locatio
 
 
 
-On the other hand, right side's line 21 to 24 of [code]push QWORD PTR [rbp-8x][/code] shows that the CPU had to execute 4 instructions just to pass "Var" to the ByValue function. The "push QWORD" means that the CPU is copying 8 bytes of data to the stack. Thus we see that four "push QWORD" instructions  are required to fully copy a 32 byte variable. 
+On the other hand, right side's line 21 to 24 of ```push QWORD PTR [rbp-8x]``` shows that the CPU had to execute 4 instructions just to pass **Var** to the ByValue function. The ```push QWORD``` means that the CPU is copying 8 bytes of data to the stack. Thus we see that four ```push QWORD``` instructions  are required to fully copy a 32 byte variable. 
 
 
 

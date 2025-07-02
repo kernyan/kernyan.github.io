@@ -1,5 +1,5 @@
 ---
-author: kernyan9
+author: kernyan
 comments: true
 date: 2019-08-03 03:46:37+00:00
 layout: post
@@ -70,7 +70,7 @@ When the user defined class has uniform members, a hash function similar to [jav
 
 
 
-    
+```cpp    
     struct UserObj 
     { 
         float a; 
@@ -95,7 +95,7 @@ When the user defined class has uniform members, a hash function similar to [jav
             } 
         }; 
     }
-
+```
 
 
 
@@ -126,7 +126,7 @@ What's the alternative then?
 
 
 
-If we can live with O (log n) lookup, then we can get away without the hash function entirely, by using std::map as the container. In exchange for the slower lookup, we no longer have to worry about hash collision. The O (log n) lookup complexity is a consequence of std::map's implementation, which orders the elements via a binary tree. That's also why we need to define a less than operator.
+If we can live with ```O (log n)``` lookup, then we can get away without the hash function entirely, by using std::map as the container. In exchange for the slower lookup, we no longer have to worry about hash collision. The ```O (log n)``` lookup complexity is a consequence of std::map's implementation, which orders the elements via a binary tree. That's also why we need to define a less than operator.
 
 
 
@@ -150,11 +150,11 @@ This is precisely what the built-in C library function memcmp does,  where
 
 
 
-<blockquote>** memcmp**
+> **`memcmp`**
 > 
-> _returns value < 0 when the first byte that does not match in both memory blocks has a lower value in ptr1 than in ptr2 (if evaluated as unsigned char values) _
+> *returns value < 0 when the first byte that does not match in both memory blocks has a lower value in ptr1 than in ptr2 (if evaluated as unsigned char values)*
 > 
-> http://www.cplusplus.com/reference/cstring/memcmp/</blockquote>
+> Source: [cplusplus.com](http://www.cplusplus.com/reference/cstring/memcmp/)
 
 
 
@@ -169,11 +169,12 @@ Thus we can write something like,
 
 
 
-    
+```cpp    
     bool operator<(UserObj const & lhs, UserObj const & rhs)
     {
         return memcmp(&lhs, &rhs, sizeof(lhs)) < 0;
     }
+```
 
 
 
