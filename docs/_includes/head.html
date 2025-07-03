@@ -9,7 +9,7 @@
     {%- include analytics.html -%}
   {%- endif -%}
   
-  {%- if site.mathjax -%}
+  {%- if page.mathjax or site.mathjax -%}
   <!-- MathJax Configuration -->
   <script>
     MathJax = {
@@ -20,8 +20,8 @@
         processEnvironments: true
       },
       options: {
-        ignoreHtmlClass: ".*|",
-        processHtmlClass: "arithmatex"
+        processHtmlClass: ".*",
+        ignoreHtmlClass: "none"
       }
     };
   </script>

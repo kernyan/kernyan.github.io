@@ -8,7 +8,6 @@ slug: getting-windows-pdb-symbol-for-air-gapped-isolated-machine
 title: Getting window's pdb symbol for air gapped / isolated environment
 categories:
 - C/C++
-- Debugging
 - Windows
 ---
 

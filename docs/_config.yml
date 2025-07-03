@@ -53,7 +53,7 @@ giscus:
 # Custom navigation categories
 sidebar_categories:
   - name: "C/C++"
-    slug: "c-c++"
+    slug: "c-c"
   - name: "CPU" 
     slug: "cpu"
   - name: "CUDA"
@@ -64,6 +64,8 @@ sidebar_categories:
     slug: "others"
   - name: "OS"
     slug: "os"
+  - name: "Robotics"
+    slug: "robotics"
   - name: "Windows"
     slug: "windows"
 

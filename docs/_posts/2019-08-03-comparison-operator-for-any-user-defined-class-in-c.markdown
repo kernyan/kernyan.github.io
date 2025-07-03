@@ -6,7 +6,6 @@ layout: post
 link: http://kernyan.com/2019/08/03/comparison-operator-for-any-user-defined-class-in-c/
 slug: comparison-operator-for-any-user-defined-class-in-c
 title: Comparison operator for any user defined class in C++
-wordpress_id: 1794
 categories:
 - C/C++
 ---
