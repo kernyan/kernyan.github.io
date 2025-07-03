@@ -8,13 +8,13 @@
 
 .page-wrapper {
   display: flex;
-  max-width: 1200px;
+  max-width: 1600px;
   margin: 0 auto;
   padding: 1rem;
 }
 
 .sidebar {
-  width: 260px;
+  flex: 0 0 360px;
   background: #f4f4f4;
   padding: 1rem;
   border-right: 1px solid #ccc;
