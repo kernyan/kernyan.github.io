@@ -1,3 +1,9 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 .site-header,
 .site-footer {
   text-align: center;
@@ -8,7 +14,8 @@
 
 .page-wrapper {
   display: flex;
-  max-width: 1600px;
+  flex-wrap: wrap;
+  max-width: 100%;
   margin: 0 auto;
   padding: 1rem;
 }
@@ -23,6 +30,7 @@
 .page-content {
   flex: 1;
   padding: 1rem 2rem;
+  min-width: 0;
 }
 
 .post-preview {
@@ -51,4 +59,21 @@
   color: #666;
   font-size: 0.9rem;
   margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+  .page-wrapper {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 1rem;
+  }
+
+  .page-content {
+    padding: 1rem;
+  }
 }
