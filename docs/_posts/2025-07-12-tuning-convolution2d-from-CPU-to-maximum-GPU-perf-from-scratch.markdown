@@ -4,10 +4,18 @@ title:  "Optimizing Conv2D from Scratch: CPU to GPU Journey (Part 1)"
 date:   2025-07-12 08:00:00 -0000
 categories:
 - CUDA
+- CPU
 mathjax: true
 ---
 
 In this blog series, I'll walk through my journey optimizing a canonical [`Conv2D` kernel](https://pytorch.org/docs/2.7/generated/torch.nn.Conv2d.html) — starting from a deeply nested CPU loop, all the way to handcrafted CUDA kernels that rival **cuDNN** and **CUTLASS**.
+
+# Table of Contents
+1. [Motivation](#motivation)
+2. [Background: What Does Conv2D Actually Do?](#background-what-does-conv2d-actually-do)
+3. [Roofline: Theoretical Peak Performacne](#roofline-theoretical-peak-performance)
+4. [CPU Implementation and Tuning](#cpu-implementation-and-tuning)
+4. [What's Next](#whats-next)
 
 # Motivation
 
