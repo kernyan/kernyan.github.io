@@ -8,7 +8,7 @@ categories:
 
 Recently, DeepSeek V3 made headlines by being able to train 14.8 trilion tokens using only 2.788 million H800 GPU hours. This was estimated to be several times more efficient than approaches that did not incorporate DeepSeek's LLM and training infrastructure designs.
 
-In the initial 2024-12-26 announcement for [DeepSeek-V3](https://arxiv.org/pdf/2412.19437), and subsequently the publishing of the [inference repo](https://github.com/deepseek-ai/DeepSeek-V3), one part that remained missing stood out to me; which is on how the cross GPU communication kernels are implemeneted.
+In the initial 2024-12-26 announcement for [DeepSeek-V3](https://arxiv.org/pdf/2412.19437), and subsequently the publishing of the [inference repo](https://github.com/deepseek-ai/DeepSeek-V3), one part remained missing, which is on how the cross GPU communication kernels are implemeneted. That was particularly interesting when read with the quote from the accompanying paper.
 
 > ### 3.2.2. Efficient Implementation of Cross-Node All-to-All Communication
 >
@@ -25,11 +25,11 @@ In the initial 2024-12-26 announcement for [DeepSeek-V3](https://arxiv.org/pdf/2
 > auto-tune the communication chunk size, which significantly reduces the use of the L2 cache
 > and the interference to other SMs.
 
-From the quote above in their paper, I'm also curious about what customized PTX instructions are used. Given that these are missing in their repo, I suspected it was a secret sauce that they didn't intend to share.
+Aside from the communication overlap design, I'm also curious about what customized PTX instructions are used. Given that these are missing in their repo, I had suspected it was a secret sauce that they didn't intend to share.
 
-Fortunately, I was proven wrong as the DeepSeek team published the [DeepEP repo](https://github.com/deepseek-ai/DeepEP) on 2025-02-26.
+Turns out they did publish the [DeepEP repo](https://github.com/deepseek-ai/DeepEP) a bit later on 2025-02-26.
 
-Thus my post below will attempt to analyze the key designs in the communication kernel.
+With that, we can analyze the key designs in the communication kernel.
 
 # Table of Contents
 1. [The Problem: Scalable MoE in LLMs](#the-problem-scalable-moe-in-llms)
